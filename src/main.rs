@@ -2,6 +2,8 @@
 // use filetime::FileTime;
 use std::env;
 use std::process::Command;
+use std::path::Path;
+
 
 //
 // fn extra() {
@@ -36,14 +38,35 @@ fn sys_command(command:String) -> std::process::Output {
     return output;
 }
 
-
-fn move_to_recycle(filename: &str) {
-    let RECYCLE_BIN_PATH: &str = "./recycle_bin";
-    let mut full_command: String = String::from("");
-    full_command.push_str(&format!("mv {} {}",filename, RECYCLE_BIN_PATH)[..]);
-    println!("{}",full_command); 
-    // let output = sys_command(full_command);
+fn is_trash_dir(rec_path: &str) {
+   if !Path::exists(Path::new(rec_path)) {
+       let cmd = format!("mkdir {}",rec_path);
+       sys_command(cmd);
+   }
 }
+
+
+fn move_to_trash(filename: &str) {
+     
+    // Path to the recycle bin
+    let rec_path: &str = "./trash";
+    
+    // Check that the given file exists
+    if !Path::new(filename).exists() {
+        panic!("{} does not exist",filename);
+    }
+
+    // Create the recycle bin if it doesn't exist
+    is_trash_dir(rec_path);
+
+    // Generate the mv command
+    let full_command = format!("mv {} {}",filename, rec_path);
+
+    // issue the shell command
+    sys_command(full_command);
+}
+
+
 
 fn main() {
    
@@ -51,11 +74,14 @@ fn main() {
     let ref filename = &args[1]; 
     match args.len() {
         1 => panic!("re: Missing operand"),
-        2 => move_to_recycle(filename),
-        _ => println!("Not implemented"),
+        2 => move_to_trash(filename),
+        _ => println!("Too many arguments. Expected 1, recieved {}",args.len()),
     }
     
     // let ref filename = &args[1];
     // let metadata = fs::metadata("foo.txt").unwrap();
     // let unix_time = FileTime::from_last_modification_time(&metadata).unix_seconds();
 }
+
+
+
