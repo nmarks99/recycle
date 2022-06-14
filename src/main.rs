@@ -2,8 +2,8 @@
 // use filetime::FileTime;
 use std::env;
 use std::path::Path;
-mod helpers;
-use helpers::sys_command;
+mod utils;
+use utils::sys_command;
 
 fn move_to_trash(filename: &str, rec_path: &str) {
     
