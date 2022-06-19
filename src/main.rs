@@ -3,8 +3,8 @@
 
 use std::env;
 use std::path::Path;
-mod utils;
-use utils::sys_command;
+mod lib;
+use lib::sys_command;
 
 fn move_to_trash(filename: &str, rec_path: &str) {
     
